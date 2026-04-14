@@ -1,0 +1,9 @@
+# terraform/environments/prod.tfvars.example
+# Copy to prod.tfvars and fill in your values.
+# NEVER commit prod.tfvars — it may contain account-specific CIDRs.
+
+environment          = "prod"
+aws_region           = "<AWS_REGION>"
+vpc_cidr             = "10.2.0.0/16"
+private_subnet_cidrs = ["10.2.1.0/24", "10.2.2.0/24", "10.2.3.0/24"]
+public_subnet_cidrs  = ["10.2.101.0/24", "10.2.102.0/24", "10.2.103.0/24"]

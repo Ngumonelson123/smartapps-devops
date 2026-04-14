@@ -20,7 +20,9 @@
 *.tfplan
 tfplan*
 .terraform.lock.hcl
-terraform/bootstrap/terraform.tfstate    # Bootstrap state — keep manually backed up
+terraform/bootstrap/terraform.tfstate
+terraform/backend.hcl
+terraform/environments/*.tfvars
 crash.log
 override.tf
 override.tf.json
