@@ -57,7 +57,7 @@ jobs:
           echo "Promoting version: ${VERSION}"
 
       - name: Configure AWS credentials (QA role — read only)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume:    ${{ secrets.AWS_ROLE_ARN_QA }}
           aws-region:        ${{ env.AWS_REGION }}
@@ -123,10 +123,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS credentials (PROD role)
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume:    ${{ secrets.AWS_ROLE_ARN_PROD }}
           aws-region:        ${{ env.AWS_REGION }}
