@@ -1,0 +1,143 @@
+# =============================================================================
+# .github/workflows/rollback.yml — Emergency Rollback
+# Trigger : Manual only (workflow_dispatch)
+# Does    : Instantly rolls back EKS deployment to previous ReplicaSet
+#           OR to a specific version tag from ECR
+#
+# WHEN TO USE
+# ──────────────────────────────────────────────────────────────────
+#   - A production deployment caused errors or regressions
+#   - You need to revert in under 2 minutes
+#   - No code change needed — uses existing ReplicaSet in EKS
+# =============================================================================
+
+name: Rollback — Emergency Revert
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to roll back"
+        required: true
+        type: choice
+        options: ["prod", "qa"]
+      strategy:
+        description: "Rollback strategy"
+        required: true
+        type: choice
+        options:
+          - "kubectl-undo"          # Fastest: reverts to previous ReplicaSet (no image pull)
+          - "specific-version"      # Roll back to a specific ECR image tag
+      target_version:
+        description: "Version tag to roll back to (only for specific-version strategy)"
+        required: false
+        type: string
+
+env:
+  IMAGE_NAME: smartapps-service
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+
+jobs:
+  rollback:
+    name: Rollback — ${{ inputs.environment }} (${{ inputs.strategy }})
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}   # Triggers approval gate for prod
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: >-
+            ${{ inputs.environment == 'prod'
+              && secrets.AWS_ROLE_ARN_PROD
+              || secrets.AWS_ROLE_ARN_QA }}
+          aws-region:        ${{ env.AWS_REGION }}
+          role-session-name: github-rollback-${{ github.run_id }}
+
+      - name: Configure kubectl
+        run: |
+          CLUSTER="${{ inputs.environment == 'prod'
+            && secrets.EKS_CLUSTER_PROD
+            || secrets.EKS_CLUSTER_QA }}"
+          aws eks update-kubeconfig --name "$CLUSTER" --region "${{ env.AWS_REGION }}"
+
+      - name: Show rollout history (before rollback)
+        run: |
+          echo "=== Rollout history for ${{ env.IMAGE_NAME }} in ${{ inputs.environment }} ==="
+          kubectl rollout history deployment/${{ env.IMAGE_NAME }} \
+            --namespace ${{ inputs.environment }}
+
+      - name: Strategy — kubectl undo (fastest)
+        if: inputs.strategy == 'kubectl-undo'
+        run: |
+          echo "Rolling back to previous ReplicaSet ..."
+          kubectl rollout undo deployment/${{ env.IMAGE_NAME }} \
+            --namespace ${{ inputs.environment }}
+
+          kubectl rollout status deployment/${{ env.IMAGE_NAME }} \
+            --namespace ${{ inputs.environment }} \
+            --timeout=180s
+
+          echo "✅ kubectl undo complete"
+
+      - name: Strategy — specific version
+        if: inputs.strategy == 'specific-version'
+        run: |
+          VERSION="${{ inputs.target_version }}"
+          ENV="${{ inputs.environment }}"
+
+          if [ -z "$VERSION" ]; then
+            echo "❌ target_version is required for specific-version strategy"
+            exit 1
+          fi
+
+          # Login to ECR to pull the image
+          aws ecr get-login-password --region "${{ env.AWS_REGION }}" \
+            | docker login --username AWS --password-stdin \
+              "${{ secrets.ECR_REGISTRY }}"
+
+          TARGET_IMAGE="${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_NAME }}-${ENV}:${VERSION}-${ENV}"
+          echo "Rolling back to: ${TARGET_IMAGE}"
+
+          kubectl set image deployment/${{ env.IMAGE_NAME }} \
+            ${{ env.IMAGE_NAME }}="${TARGET_IMAGE}" \
+            --namespace "${ENV}"
+
+          kubectl annotate deployment/${{ env.IMAGE_NAME }} \
+            kubernetes.io/change-cause="ROLLBACK to ${VERSION} by ${{ github.actor }}" \
+            --namespace "${ENV}" \
+            --overwrite
+
+          kubectl rollout status deployment/${{ env.IMAGE_NAME }} \
+            --namespace "${ENV}" \
+            --timeout=180s
+
+          echo "✅ Rolled back to ${TARGET_IMAGE}"
+
+      - name: Verify post-rollback state
+        run: |
+          echo "=== Post-rollback pod state ==="
+          kubectl get pods -n ${{ inputs.environment }} \
+            -l app=${{ env.IMAGE_NAME }}
+
+          echo ""
+          echo "=== Active image ==="
+          kubectl get deployment/${{ env.IMAGE_NAME }} \
+            -n ${{ inputs.environment }} \
+            -o jsonpath='{.spec.template.spec.containers[0].image}'
+
+      - name: Rollback summary
+        run: |
+          echo "## ⏪ Rollback Complete" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | ${{ inputs.environment }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Strategy | ${{ inputs.strategy }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Target version | ${{ inputs.target_version || 'previous ReplicaSet' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Executed by | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Timestamp | $(date -u) |" >> $GITHUB_STEP_SUMMARY

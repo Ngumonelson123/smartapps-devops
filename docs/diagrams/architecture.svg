@@ -1,0 +1,234 @@
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" width="1200" height="900" font-family="Inter, system-ui, sans-serif" style="background:#0d1117">
+
+  <title>SmartApps International — AWS DevOps Architecture</title>
+  <desc>GitHub Actions · Amazon ECR · Amazon EKS · Terraform · AWS Secrets Manager</desc>
+
+  <defs>
+    <marker id="ab" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#388bfd"/></marker>
+    <marker id="ao" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f78166"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3fb950"/></marker>
+    <marker id="ay" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e3b341"/></marker>
+    <marker id="ap" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#a371f7"/></marker>
+    <linearGradient id="gAws" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1c2128"/>
+      <stop offset="100%" stop-color="#13181f"/>
+    </linearGradient>
+    <linearGradient id="gEks" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d2137"/>
+      <stop offset="100%" stop-color="#091520"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ═══════════════════════════════════════ TITLE ═══════════════════════════════════════ -->
+  <text x="600" y="30" text-anchor="middle" fill="#f0f6fc" font-size="16" font-weight="700">SmartApps International — AWS DevOps Architecture</text>
+  <text x="600" y="50" text-anchor="middle" fill="#8b949e" font-size="11" font-family="monospace">GitHub Actions  ·  Amazon ECR  ·  Amazon EKS  ·  Terraform  ·  AWS Secrets Manager</text>
+
+  <!-- ═══════════════════════════════════════ ZONES ════════════════════════════════════════ -->
+
+  <!-- Developer zone -->
+  <rect x="20" y="68" width="170" height="110" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="105" y="84" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="700" letter-spacing="1.5">DEVELOPER</text>
+
+  <!-- GitHub zone -->
+  <rect x="20" y="198" width="170" height="260" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="105" y="214" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="700" letter-spacing="1.5">GITHUB</text>
+
+  <!-- AWS Cloud -->
+  <rect x="210" y="68" width="970" height="720" rx="12" fill="url(#gAws)" stroke="#FF9900" stroke-width="1.5" stroke-dasharray="8,4"/>
+  <text x="695" y="88" text-anchor="middle" fill="#FF9900" font-size="11" font-weight="700" letter-spacing="2">AWS CLOUD  ·  eu-west-1</text>
+
+  <!-- VPC -->
+  <rect x="226" y="100" width="938" height="678" rx="10" fill="none" stroke="#1f6feb" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="695" y="116" text-anchor="middle" fill="#1f6feb" font-size="9" font-weight="600" letter-spacing="1">VPC  10.x.0.0/16</text>
+
+  <!-- EKS Cluster -->
+  <rect x="560" y="430" width="590" height="330" rx="10" fill="url(#gEks)" stroke="#388bfd" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="855" y="450" text-anchor="middle" fill="#388bfd" font-size="10" font-weight="700" letter-spacing="1">AMAZON EKS CLUSTER</text>
+
+  <!-- QA Namespace -->
+  <rect x="576" y="462" width="260" height="175" rx="8" fill="#0a1f10" stroke="#3fb950" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="706" y="478" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="600" letter-spacing="1">NAMESPACE: qa</text>
+
+  <!-- Prod Namespace -->
+  <rect x="858" y="462" width="275" height="175" rx="8" fill="#1a0a0a" stroke="#f78166" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="995" y="478" text-anchor="middle" fill="#f78166" font-size="9" font-weight="600" letter-spacing="1">NAMESPACE: prod</text>
+
+  <!-- ═══════════════════════════════════════ NODES ════════════════════════════════════════ -->
+
+  <!-- Developer box -->
+  <rect x="30" y="90" width="150" height="70" rx="7" fill="#21262d" stroke="#388bfd" stroke-width="1.5"/>
+  <text x="105" y="114" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">Developer</text>
+  <text x="105" y="130" text-anchor="middle" fill="#8b949e" font-size="10">git push / git tag</text>
+  <text x="105" y="148" text-anchor="middle" fill="#79c0ff" font-size="10" font-family="monospace">v1.2.0</text>
+
+  <!-- GitHub Repo -->
+  <rect x="30" y="222" width="150" height="55" rx="7" fill="#21262d" stroke="#6e40c9" stroke-width="1.5"/>
+  <text x="105" y="246" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">GitHub Repo</text>
+  <text x="105" y="263" text-anchor="middle" fill="#8b949e" font-size="10">source of truth</text>
+
+  <!-- CI Workflow -->
+  <rect x="30" y="300" width="150" height="60" rx="7" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="105" y="324" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">CI Workflow</text>
+  <text x="105" y="342" text-anchor="middle" fill="#8b949e" font-size="10">test → build → push QA</text>
+
+  <!-- CD Workflow -->
+  <rect x="30" y="384" width="150" height="60" rx="7" fill="#21262d" stroke="#f78166" stroke-width="1.5"/>
+  <text x="105" y="408" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">CD Workflow</text>
+  <text x="105" y="426" text-anchor="middle" fill="#8b949e" font-size="10">gate → approve → prod</text>
+
+  <!-- ECR QA -->
+  <rect x="246" y="130" width="175" height="80" rx="7" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="333" y="158" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">ECR — QA</text>
+  <text x="333" y="176" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">repo-qa  :5001</text>
+  <text x="333" y="200" text-anchor="middle" fill="#3fb950" font-size="10">scan-on-push ✓</text>
+
+  <!-- ECR Prod -->
+  <rect x="456" y="130" width="175" height="80" rx="7" fill="#21262d" stroke="#f78166" stroke-width="1.5"/>
+  <text x="543" y="158" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">ECR — Prod</text>
+  <text x="543" y="176" text-anchor="middle" fill="#8b949e" font-size="10" font-family="monospace">repo-prod  :5000</text>
+  <text x="543" y="200" text-anchor="middle" fill="#f78166" font-size="10">scan-on-push ✓</text>
+
+  <!-- Secrets Manager -->
+  <rect x="246" y="250" width="175" height="80" rx="7" fill="#21262d" stroke="#e3b341" stroke-width="1.5"/>
+  <text x="333" y="274" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">Secrets Manager</text>
+  <text x="333" y="292" text-anchor="middle" fill="#8b949e" font-size="10">/smartapps/qa/config</text>
+  <text x="333" y="320" text-anchor="middle" fill="#8b949e" font-size="10">/smartapps/prod/config</text>
+
+  <!-- S3 State -->
+  <rect x="456" y="250" width="175" height="80" rx="7" fill="#21262d" stroke="#e3b341" stroke-width="1.5"/>
+  <text x="543" y="274" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">S3 State Bucket</text>
+  <text x="543" y="292" text-anchor="middle" fill="#8b949e" font-size="10">terraform.tfstate</text>
+  <text x="543" y="310" text-anchor="middle" fill="#8b949e" font-size="10">versioned + encrypted</text>
+
+  <!-- DynamoDB -->
+  <rect x="246" y="370" width="175" height="65" rx="7" fill="#21262d" stroke="#e3b341" stroke-width="1.5"/>
+  <text x="333" y="396" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">DynamoDB</text>
+  <text x="333" y="414" text-anchor="middle" fill="#8b949e" font-size="10">tf-locks · state locking</text>
+
+  <!-- IAM + OIDC -->
+  <rect x="456" y="370" width="175" height="65" rx="7" fill="#21262d" stroke="#a371f7" stroke-width="1.5"/>
+  <text x="543" y="396" text-anchor="middle" fill="#f0f6fc" font-size="12" font-weight="600">IAM + OIDC</text>
+  <text x="543" y="414" text-anchor="middle" fill="#8b949e" font-size="10">no static keys</text>
+
+  <!-- QA Pod 1 -->
+  <rect x="586" y="490" width="110" height="52" rx="6" fill="#0f2d1a" stroke="#3fb950" stroke-width="1.2"/>
+  <text x="641" y="512" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="600">Pod</text>
+  <text x="641" y="530" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">1.2.0-qa</text>
+
+  <!-- QA Pod 2 -->
+  <rect x="714" y="490" width="110" height="52" rx="6" fill="#0f2d1a" stroke="#3fb950" stroke-width="1.2"/>
+  <text x="769" y="512" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="600">Pod</text>
+  <text x="769" y="530" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">1.2.0-qa</text>
+
+  <!-- QA Service -->
+  <rect x="586" y="558" width="238" height="48" rx="6" fill="#0a1929" stroke="#388bfd" stroke-width="1"/>
+  <text x="705" y="578" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="600">Service  ClusterIP :80</text>
+  <text x="705" y="596" text-anchor="middle" fill="#6e7681" font-size="9">liveness + readiness probes</text>
+
+  <!-- Prod Pod 1 -->
+  <rect x="868" y="490" width="110" height="52" rx="6" fill="#2d0f0f" stroke="#f78166" stroke-width="1.2"/>
+  <text x="923" y="512" text-anchor="middle" fill="#f78166" font-size="11" font-weight="600">Pod</text>
+  <text x="923" y="530" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">1.2.0-prod</text>
+
+  <!-- Prod Pod 2 -->
+  <rect x="996" y="490" width="110" height="52" rx="6" fill="#2d0f0f" stroke="#f78166" stroke-width="1.2"/>
+  <text x="1051" y="512" text-anchor="middle" fill="#f78166" font-size="11" font-weight="600">Pod</text>
+  <text x="1051" y="530" text-anchor="middle" fill="#8b949e" font-size="9" font-family="monospace">1.2.0-prod</text>
+
+  <!-- Prod Service -->
+  <rect x="868" y="558" width="238" height="48" rx="6" fill="#1a0a0a" stroke="#388bfd" stroke-width="1"/>
+  <text x="987" y="578" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="600">Service  ClusterIP :80</text>
+  <text x="987" y="596" text-anchor="middle" fill="#6e7681" font-size="9">liveness + readiness probes</text>
+
+  <!-- HPA -->
+  <rect x="868" y="620" width="238" height="48" rx="6" fill="#1a0a0a" stroke="#e3b341" stroke-width="1"/>
+  <text x="987" y="642" text-anchor="middle" fill="#e3b341" font-size="11" font-weight="600">HPA: 2 – 8 replicas</text>
+  <text x="987" y="659" text-anchor="middle" fill="#6e7681" font-size="9">CPU 70%  |  Memory 80%</text>
+
+  <!-- Node Groups -->
+  <rect x="576" y="652" width="258" height="48" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="705" y="672" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="600">EKS Node Groups</text>
+  <text x="705" y="689" text-anchor="middle" fill="#6e7681" font-size="9">QA: t3.small SPOT  ·  Prod: t3.medium ON-DEMAND</text>
+
+  <!-- Rollback -->
+  <rect x="576" y="716" width="560" height="40" rx="6" fill="#161b22" stroke="#f78166" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="856" y="733" text-anchor="middle" fill="#f78166" font-size="10" font-weight="600">⏪  ROLLBACK</text>
+  <text x="856" y="748" text-anchor="middle" fill="#6e7681" font-size="9">kubectl rollout undo  |  specific-version tag  |  &lt;60s revert</text>
+
+  <!-- QA Gate badge -->
+  <rect x="576" y="614" width="130" height="24" rx="4" fill="#0f2d1a" stroke="#3fb950" stroke-width="1"/>
+  <text x="641" y="630" text-anchor="middle" fill="#3fb950" font-size="9" font-weight="600">✓  QA Gate enforced</text>
+
+  <!-- ═══════════════════════════════════════ ARROWS ════════════════════════════════════════ -->
+
+  <!-- 1  Dev → GitHub Repo -->
+  <line x1="105" y1="160" x2="105" y2="220" stroke="#388bfd" stroke-width="1.5" marker-end="url(#ab)"/>
+  <circle cx="105" cy="190" r="9" fill="#388bfd"/>
+  <text x="105" y="194" text-anchor="middle" fill="white" font-size="9" font-weight="700">1</text>
+
+  <!-- 2  GitHub → CI -->
+  <line x1="105" y1="277" x2="105" y2="298" stroke="#3fb950" stroke-width="1.5" marker-end="url(#ag)"/>
+  <circle cx="105" cy="289" r="9" fill="#3fb950"/>
+  <text x="105" y="293" text-anchor="middle" fill="white" font-size="9" font-weight="700">2</text>
+
+  <!-- 3  CI → CD -->
+  <line x1="105" y1="360" x2="105" y2="382" stroke="#f78166" stroke-width="1.5" marker-end="url(#ao)"/>
+  <circle cx="105" cy="372" r="9" fill="#f78166"/>
+  <text x="105" y="376" text-anchor="middle" fill="white" font-size="9" font-weight="700">3</text>
+
+  <!-- 4  CI → ECR QA -->
+  <path d="M180 318 Q213 318 246 168" stroke="#3fb950" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ag)"/>
+  <circle cx="226" cy="168" r="9" fill="#3fb950"/>
+  <text x="226" y="172" text-anchor="middle" fill="white" font-size="9" font-weight="700">4</text>
+  <text x="196" y="308" fill="#3fb950" font-size="9">push 1.2.0-qa</text>
+
+  <!-- 5  CD → ECR Prod -->
+  <path d="M180 410 Q318 410 456 168" stroke="#f78166" stroke-width="1.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ao)"/>
+  <circle cx="436" cy="168" r="9" fill="#f78166"/>
+  <text x="436" y="172" text-anchor="middle" fill="white" font-size="9" font-weight="700">5</text>
+  <text x="290" y="388" fill="#f78166" font-size="9">push 1.2.0-prod</text>
+
+  <!-- ECR QA → QA Pods -->
+  <path d="M333 210 Q333 430 580 516" stroke="#3fb950" stroke-width="1.2" fill="none" stroke-dasharray="4,2" marker-end="url(#ag)"/>
+
+  <!-- ECR Prod → Prod Pods -->
+  <path d="M543 210 Q543 430 862 516" stroke="#f78166" stroke-width="1.2" fill="none" stroke-dasharray="4,2" marker-end="url(#ao)"/>
+
+  <!-- OIDC → CI -->
+  <path d="M456 400 Q320 400 182 360" stroke="#a371f7" stroke-width="1" fill="none" stroke-dasharray="3,2" marker-end="url(#ap)"/>
+  <text x="330" y="394" fill="#a371f7" font-size="9">OIDC auth</text>
+
+  <!-- S3 → DynamoDB lock -->
+  <line x1="456" y1="290" x2="436" y2="290" stroke="#e3b341" stroke-width="1"/>
+  <line x1="436" y1="290" x2="436" y2="400" stroke="#e3b341" stroke-width="1"/>
+  <line x1="436" y1="400" x2="423" y2="400" stroke="#e3b341" stroke-width="1" marker-end="url(#ay)"/>
+  <text x="440" y="350" fill="#e3b341" font-size="9">lock</text>
+
+  <!-- Secrets → QA pods -->
+  <path d="M333 330 Q333 460 580 516" stroke="#e3b341" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+
+  <!-- Secrets → Prod pods -->
+  <path d="M421 290 Q700 380 862 516" stroke="#e3b341" stroke-width="1" fill="none" stroke-dasharray="2,2"/>
+
+  <!-- ═══════════════════════════════════════ LEGEND ════════════════════════════════════════ -->
+  <line x1="20" y1="840" x2="1180" y2="840" stroke="#30363d" stroke-width="1"/>
+
+  <rect x="60"  y="854" width="12" height="12" rx="2" fill="#3fb950"/>
+  <text x="78"  y="865" fill="#8b949e" font-size="11">QA path</text>
+
+  <rect x="180" y="854" width="12" height="12" rx="2" fill="#f78166"/>
+  <text x="198" y="865" fill="#8b949e" font-size="11">Production path</text>
+
+  <rect x="360" y="854" width="12" height="12" rx="2" fill="#388bfd"/>
+  <text x="378" y="865" fill="#8b949e" font-size="11">Developer / GitHub Actions</text>
+
+  <rect x="600" y="854" width="12" height="12" rx="2" fill="#e3b341"/>
+  <text x="618" y="865" fill="#8b949e" font-size="11">State / Secrets / IAM</text>
+
+  <rect x="820" y="854" width="12" height="12" rx="2" fill="#a371f7"/>
+  <text x="838" y="865" fill="#8b949e" font-size="11">OIDC (no static keys)</text>
+
+  <rect x="1020" y="854" width="12" height="12" rx="2" fill="#f78166" fill-opacity="0.4" stroke="#f78166" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="1038" y="865" fill="#8b949e" font-size="11">Rollback path</text>
+
+</svg>

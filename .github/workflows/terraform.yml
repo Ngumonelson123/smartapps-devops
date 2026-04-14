@@ -1,0 +1,139 @@
+# .github/workflows/terraform.yml — Infrastructure as Code Pipeline
+# Trigger : Push to main that changes terraform/ files
+#           OR manual workflow_dispatch
+#
+# Flow    : Format Check → Init → Plan (auto) → Apply (manual approval)
+
+name: Terraform — Infrastructure
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "!terraform/bootstrap/**"       # Bootstrap is run manually, not via CI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options: ["qa", "prod"]
+      action:
+        description: "Terraform action"
+        required: true
+        type: choice
+        options: ["plan", "apply", "destroy"]
+
+env:
+  TF_VERSION: "1.7.0"
+  AWS_REGION:  ${{ secrets.AWS_REGION }}
+
+jobs:
+
+  terraform-qa:
+    name: Terraform — QA
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' && inputs.environment == 'qa')
+    environment: qa
+
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume:    ${{ secrets.AWS_ROLE_ARN_QA }}
+          aws-region:        ${{ env.AWS_REGION }}
+          role-session-name: github-tf-qa-${{ github.run_id }}
+
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="../backend.hcl" \
+            -backend-config="key=qa/terraform.tfstate"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan \
+            -var-file="environments/qa.tfvars" \
+            -out=tfplan-qa \
+            -no-color 2>&1 | tee plan-output.txt
+          echo "exitcode=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Terraform Apply (QA — auto-approve)
+        if: |
+          github.ref == 'refs/heads/main' &&
+          (github.event_name == 'push' ||
+          (github.event_name == 'workflow_dispatch' && inputs.action == 'apply'))
+        run: terraform apply -auto-approve tfplan-qa
+
+  terraform-prod:
+    name: Terraform — Production
+    runs-on: ubuntu-latest
+    needs: terraform-qa
+    if: |
+      github.event_name == 'workflow_dispatch' && inputs.environment == 'prod'
+    environment: production              # Human approval required
+
+    permissions:
+      id-token: write
+      contents: read
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS credentials (Prod role)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume:    ${{ secrets.AWS_ROLE_ARN_PROD }}
+          aws-region:        ${{ env.AWS_REGION }}
+          role-session-name: github-tf-prod-${{ github.run_id }}
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="../backend.hcl" \
+            -backend-config="key=prod/terraform.tfstate"
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var-file="environments/prod.tfvars" \
+            -out=tfplan-prod
+
+      - name: Terraform Apply (Prod — no auto-approve)
+        if: inputs.action == 'apply'
+        run: terraform apply tfplan-prod

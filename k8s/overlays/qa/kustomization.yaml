@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: qa
+
+resources:
+  - ../../base
+
+# Override image for QA registry
+images:
+  - name: IMAGE_PLACEHOLDER
+    newName: localhost:5001/smartapps-service    # QA registry
+    newTag: latest-qa                            # Updated by deploy.sh
+
+# QA-specific patches
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: smartapps-service
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: APP_ENV
+          value: "qa"
+    target:
+      kind: Deployment
+      name: smartapps-service

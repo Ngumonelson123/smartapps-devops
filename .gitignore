@@ -1,0 +1,47 @@
+
+# .gitignore — SmartApps DevOps Project
+# SECRETS-NEVER commit these
+.env
+.env.qa
+.env.prod
+.env.local
+.env.*.local
+*.pem
+*.key
+*_rsa
+*_dsa
+*.p12
+*.pfx
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan*
+.terraform.lock.hcl
+terraform/bootstrap/terraform.tfstate    # Bootstrap state — keep manually backed up
+crash.log
+override.tf
+override.tf.json
+
+# Node.js
+node_modules/
+npm-debug.log*
+coverage/
+.nyc_output/
+
+# This is local-only; in CI it lives in the workflow run
+scripts/.version_history.log
+
+#OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml

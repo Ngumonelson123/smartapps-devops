@@ -1,0 +1,90 @@
+# =============================================================================
+# docker-compose.yml — Local Development & Registry Testing#
+# Spins up two local Docker registries (QA on :5001, Prod on :5000)
+# plus the application itself — letting you run the FULL pipeline locally
+#
+# REGISTRY ENDPOINTS (local)
+# --------------------------
+#   QA   → localhost:5001
+#   Prod → localhost:5000
+#
+# After running deploy.sh locally, verify images were pushed:
+#   curl http://localhost:5001/v2/smartapps-service/tags/list
+#   curl http://localhost:5000/v2/smartapps-service/tags/list
+# =============================================================================
+
+services:
+
+  # QA Registry (port 5001)
+  registry-qa:
+    image: registry:2
+    container_name: registry-qa
+    restart: unless-stopped
+    ports:
+      - "5001:5000"
+    volumes:
+      - registry-qa-data:/var/lib/registry
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    networks:
+      - smartapps-net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/v2/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Production Registry (port 5000)
+  registry-prod:
+    image: registry:2
+    container_name: registry-prod
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - registry-prod-data:/var/lib/registry
+    environment:
+      REGISTRY_STORAGE_DELETE_ENABLED: "true"
+    networks:
+      - smartapps-net
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:5000/v2/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Application (QA mode — for local testing)
+  app-qa:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        APP_VERSION: "1.0.0"
+        BUILD_ENV: "qa"
+    container_name: smartapps-qa
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      APP_ENV: "qa"
+      APP_VERSION: "1.0.0"
+      PORT: "8080"
+    networks:
+      - smartapps-net
+    depends_on:
+      registry-qa:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  smartapps-net:
+    driver: bridge
+
+volumes:
+  registry-qa-data:
+  registry-prod-data:

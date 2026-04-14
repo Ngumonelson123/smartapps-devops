@@ -1,0 +1,48 @@
+
+# .dockerignore — Exclude from Docker build context
+# Keeps build context small and prevents secrets leaking into image
+# Dependencies (installed fresh inside builder stage)
+app/node_modules/
+**/node_modules/
+
+.git/
+.gitignore
+
+.env
+.env.*
+!.env.example
+
+coverage/
+.nyc_output/
+**/__tests__/
+
+terraform/
+**/.terraform/
+**/*.tfstate
+**/*.tfplan
+
+k8s/
+
+docs/
+*.md
+README*
+
+jenkins/
+Jenkinsfile*
+.github/
+
+scripts/
+
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
